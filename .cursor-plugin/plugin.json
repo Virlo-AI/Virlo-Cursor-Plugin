@@ -1,0 +1,41 @@
+{
+  "name": "virlo",
+  "displayName": "Virlo",
+  "version": "1.0.0",
+  "minClientVersions": {
+    "cursor": "3.13.0"
+  },
+  "description": "Research short-form video trends, viral videos, creators, sounds, and hashtags.",
+  "author": {
+    "name": "Virlo",
+    "email": "support@virlo.ai"
+  },
+  "homepage": "https://dev.virlo.ai/docs/mcp",
+  "repository": "https://github.com/Virlo-AI/Virlo-Cursor-Plugin",
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "keywords": [
+    "virlo",
+    "tiktok",
+    "youtube-shorts",
+    "instagram-reels",
+    "short-form-video",
+    "trends",
+    "viral-videos",
+    "creator-analytics",
+    "social-listening",
+    "marketing",
+    "mcp"
+  ],
+  "category": "integrations",
+  "tags": [
+    "virlo",
+    "social",
+    "marketing",
+    "mcp"
+  ],
+  "mcpServers": "./mcp.json",
+  "rules": "./rules/",
+  "skills": "./skills/",
+  "commands": "./commands/"
+}

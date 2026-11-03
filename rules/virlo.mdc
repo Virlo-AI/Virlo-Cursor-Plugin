@@ -1,0 +1,48 @@
+---
+description: Route short-form video questions to the right virlo MCP tools, and spend Virlo credits safely.
+alwaysApply: true
+---
+
+# Virlo: short-form video research
+
+Use the `virlo` MCP tools for anything about public short-form video on TikTok, YouTube Shorts,
+Instagram Reels, or Meta Ads: what is trending, why a video broke out, how a creator, sound, or
+hashtag is performing, which hooks work in a niche, or ongoing monitoring of a niche.
+
+Virlo reads public data. It does not post, comment, follow, or touch the user's own social
+accounts, and it has no write access to any social platform.
+
+The server decides its own tool list, so read the tools the server actually offers instead of
+assuming a tool exists because it is named here.
+
+## Spend credits deliberately
+
+Virlo is pay-as-you-go against a prepaid balance. Reads of work the user already paid for are
+free; starting new work is not.
+
+- Call `get_credit_balance` and quote the expected cost before any paid run.
+- Get an explicit yes before `create_niche_monitor`. A recurring agent bills on **every** run.
+- Before creating new work, call `list_keyword_searches` and `list_niche_monitors` and reuse a
+  match. Re-reading an existing result is free — filter by date, platform, or `min_views` at
+  read time instead of paying to re-run.
+- The `X-Cost` response header is the authoritative charge. Never assume a read is free.
+
+## Write the intent before searching
+
+Never turn a topic straight into keywords. Write one concrete sentence first — goal + content
+type + exclusions — and pass it to `suggest_keywords`. If `quality.passes` is false, sharpen the
+intent and retry. Pass that same intent to `search_keywords` or `create_niche_monitor`.
+
+## Async jobs
+
+Creation tools auto-poll for about 25 seconds, then return a `job_id`. Research agent runs take
+about 15-20 minutes. Hand the id back to the user and check later — never busy-wait in a loop.
+
+`finalized: true` is the done signal, not `status: "completed"` — a job can be "completed" with
+AI analysis still pending. A null analysis field means "not yet", not "no data".
+`partial_failure` is still usable data.
+
+## Rank by weighted virality
+
+Rank by `ln(views / followers) x ln(followers)`, never by raw views, and never compare raw views
+across platforms. Prefer `order_by=weighted_score`, `rising`, or `growth` where a tool offers it.

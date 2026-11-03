@@ -1,0 +1,18 @@
+{
+  "name": "virlo",
+  "owner": {
+    "name": "Virlo",
+    "email": "support@virlo.ai"
+  },
+  "metadata": {
+    "description": "Short-form video intelligence for Cursor: TikTok, YouTube Shorts, and Instagram Reels trends, creators, sounds, and hashtags",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "virlo",
+      "source": "./",
+      "description": "Research short-form video trends, viral videos, creators, sounds, and hashtags."
+    }
+  ]
+}
