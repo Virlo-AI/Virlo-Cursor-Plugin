@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Short-form video intelligence for Cursor: TikTok, YouTube Shorts, and Instagram Reels trends, creators, sounds, and hashtags",
-    "version": "1.0.0"
+    "version": "0.4.3"
   },
   "plugins": [
     {

@@ -1,6 +1,6 @@
 ---
 name: short-form-trend-research
-description: >-
+description: >
   Turns live Virlo trend data into a short-form content plan for TikTok, YouTube Shorts, and
   Instagram Reels: which trends and sounds to ride, which hooks and formats are working in a
   niche, which creators to study, and how to tell a real trend from noise. Use when the user
@@ -10,7 +10,7 @@ description: >-
   video.
 ---
 
-# Short-form trend research
+# Short-Form Trend Research
 
 > **What this skill does, and does not do.** It is advisory. It plans research, reads Virlo data,
 > and turns it into content decisions. It does not post, schedule, or touch the user's social
@@ -24,10 +24,10 @@ what to make this week and why. Every answer ends with specific content ideas th
 
 ## Route the user
 
-- **"What should I post?"** -> Weekly content plan (below).
-- **"Why is my content not getting views?"** -> Benchmark against the niche (below).
-- **"Is this trend worth jumping on?"** -> Trend check (below).
-- **"Who should I study?"** -> Creator study (below).
+- **"What should I post?"** → Weekly content plan (below).
+- **"Why is my content not getting views?"** → Benchmark against the niche (below).
+- **"Is this trend worth jumping on?"** → Trend check (below).
+- **"Who should I study?"** → Creator study (below).
 
 Ask for the niche and the platform first if the user did not give them. Default to all three
 platforms.
@@ -36,13 +36,16 @@ platforms.
 
 1. Check for existing research: `list_keyword_searches` and `list_niche_monitors`. Reuse a match.
 2. If nothing matches, write a one-sentence intent (goal + content type + exclusions), run
-   `suggest_keywords`, confirm the cost, then `search_keywords`. Tell the user it takes about
-   15-20 minutes.
+   `suggest_keywords`, confirm the cost, then `search_keywords`. Tell the user it usually takes
+   about 8 minutes (9 in 10 within 20).
 3. In parallel, pull the free or cheap context: `get_emerging_trends`, `get_breakout_sounds`,
-   `get_trending_hooks`.
+   `get_trending_hooks`, and `get_content_trends` (Content Trends: video formats creators are copying right now,
+   filtered with `client_fit` or `platform` when it helps).
 4. When the agent finalizes, read `get_keyword_search_results`. Rank by weighted virality.
 5. Deliver:
-   - **3 trends to ride**, each with one example video and why it works.
+   - **3 trends to ride**, each with one example video and why it works. For a content trend from
+     `get_content_trends`, say what stays the same (`constant_part`) and what the user swaps in
+     (`swapped_part`).
    - **1-2 sounds** that are breaking out, not ones that already peaked.
    - **5 hooks** adapted to the user's niche, in their voice.
    - **5 video ideas** that combine the above: hook + format + sound + CTA.
@@ -65,6 +68,9 @@ platforms.
 A trend is worth riding when all of these are true:
 
 - It is **rising**, not flat. Check `get_emerging_trends` or `get_hashtag_performance` growth.
+  For a video format, call `get_content_trend` and read `lifecycle` (`new` or `rising` is the
+  window) and `creators_7d` against `creators_prev_7d`. Ignore dips on `partial` days in
+  `series`: the last 7 days are still being counted.
 - Small and mid accounts get outliers on it, not only big accounts. Use `follower_tier` filters.
 - It fits the user's niche without a forced angle.
 - The window is still open. A sound or format that peaked more than about a week ago is late.
@@ -81,7 +87,7 @@ Say "skip it" when the evidence says so. A clear no is more useful than a weak y
 
 ## Rules of thumb
 
-- Rank by weighted virality `ln(views / followers) x ln(followers)`, never raw views.
+- Rank by weighted virality `ln(views / followers) × ln(followers)`, never raw views.
 - Never compare raw views across platforms.
 - One-off viral videos are noise. Look for a pattern across 3+ outliers before you call a trend.
 - Recommend a recurring monitor (`create_niche_monitor`, weekly) only when the user will act on it

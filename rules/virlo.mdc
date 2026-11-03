@@ -7,42 +7,62 @@ alwaysApply: true
 
 Use the `virlo` MCP tools for anything about public short-form video on TikTok, YouTube Shorts,
 Instagram Reels, or Meta Ads: what is trending, why a video broke out, how a creator, sound, or
-hashtag is performing, which hooks work in a niche, or ongoing monitoring of a niche.
+hashtag is performing, which hooks or formats work in a niche, or ongoing monitoring of a niche.
+
+"Start", "kick off" or "run a research agent" on a niche or content topic means a Virlo research
+agent, not a general web-research task.
 
 Virlo reads public data. It does not post, comment, follow, or touch the user's own social
 accounts, and it has no write access to any social platform.
 
-The server decides its own tool list, so read the tools the server actually offers instead of
-assuming a tool exists because it is named here.
+The server decides its own tool list, so read the tools it actually offers instead of assuming a
+tool exists because it is named here.
 
 ## Spend credits deliberately
 
-Virlo is pay-as-you-go against a prepaid balance. Reads of work the user already paid for are
+Virlo is pay-as-you-go against a prepaid balance. Re-reading research the user already paid for is
 free; starting new work is not.
 
 - Call `get_credit_balance` and quote the expected cost before any paid run.
-- Get an explicit yes before `create_niche_monitor`. A recurring agent bills on **every** run.
+- Get an explicit yes before `create_niche_monitor`. A recurring agent bills on **every** run
+  ($0.50/run, +$1.00/run with Data Intelligence). A one-shot `search_keywords` bills once ($0.50,
+  +$1.00 with Data Intelligence).
 - Before creating new work, call `list_keyword_searches` and `list_niche_monitors` and reuse a
-  match. Re-reading an existing result is free — filter by date, platform, or `min_views` at
-  read time instead of paying to re-run.
-- The `X-Cost` response header is the authoritative charge. Never assume a read is free.
+  match. Re-reading an existing result (`get_keyword_search_results`, `get_niche_monitor_data`,
+  `get_satellite_run`) is free — filter by date, platform, or `min_views` at read time instead of
+  paying to re-run.
+- Each tool's description states its price. Instant data reads (trends, sounds, hooks, hashtags,
+  `raw_*`) are billed per call **even when they come back empty**. MCP results do not show what a
+  call cost, so when the user needs the exact charge, compare `get_credit_balance` before and after.
 
 ## Write the intent before searching
 
 Never turn a topic straight into keywords. Write one concrete sentence first — goal + content
 type + exclusions — and pass it to `suggest_keywords`. If `quality.passes` is false, sharpen the
-intent and retry. Pass that same intent to `search_keywords` or `create_niche_monitor`.
+intent and retry. Pass that same intent to `search_keywords` or `create_niche_monitor`, and do not
+pass `min_views` or `time_period` at creation.
 
 ## Async jobs
 
-Creation tools auto-poll for about 25 seconds, then return a `job_id`. Research agent runs take
-about 15-20 minutes. Hand the id back to the user and check later — never busy-wait in a loop.
+Creation tools wait up to about 25 seconds, then return a `job_id` if the job is still running.
+Research agents usually finish collecting in about 8 minutes (9 in 10 within 20, up to 45 with
+Meta ads), and the AI report lands a few minutes later.
+
+Still running is normal. Tell the user it is in progress and roughly when it will be ready, then
+check again on their next message — never call a status tool repeatedly in a row.
 
 `finalized: true` is the done signal, not `status: "completed"` — a job can be "completed" with
 AI analysis still pending. A null analysis field means "not yet", not "no data".
 `partial_failure` is still usable data.
 
-## Rank by weighted virality
+## Read and rank correctly
 
-Rank by `ln(views / followers) x ln(followers)`, never by raw views, and never compare raw views
-across platforms. Prefer `order_by=weighted_score`, `rising`, or `growth` where a tool offers it.
+- Rank by weighted virality, `ln(views / followers) × ln(followers)`, never by raw views, and
+  never compare raw views across platforms. Prefer `order_by=weighted_score`, `rising`, or
+  `growth` where a tool offers it.
+- Follow any `how_to_read` notes on a result. The last 7 days of a Content Trend series are still
+  being counted, so a dip there is not a decline.
+- Posts flagged `is_paid: true` are ads or paid partnerships — label them as ads, not organic wins.
+- When showing audience data, say its `data_source` and `confidence_level`.
+- Lead with the 3-5 findings that matter, each with a real number, the creator's handle, and a link
+  to the video. Then the detail.
